@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/LoginPage';
+import { CreateEventPage } from './pages/CreateEventPage';
 import { Navbar } from './components/Navbar';
 
 function StudentEventsPage() {
@@ -17,8 +18,24 @@ function OrganizerEventsPage() {
   const { user } = useAuth();
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h2>Organizer Dashboard / Events</h2>
-      <p>Welcome, {user?.displayName}! You are logged in as an Organizer.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h2>Organizer Events</h2>
+        <Link
+          to="/organizer/events/new"
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: '#2563eb',
+            color: '#ffffff',
+            borderRadius: '6px',
+            textDecoration: 'none',
+            fontWeight: 600,
+            fontSize: '0.9rem'
+          }}
+        >
+          + Create Event
+        </Link>
+      </div>
+      <p>Welcome, {user?.displayName}! Here you manage your created events.</p>
     </div>
   );
 }
@@ -51,6 +68,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/events" element={<StudentEventsPage />} />
             <Route path="/organizer/events" element={<OrganizerEventsPage />} />
+            <Route path="/organizer/events/new" element={<CreateEventPage />} />
             <Route path="*" element={<RootRedirect />} />
           </Routes>
         </div>
