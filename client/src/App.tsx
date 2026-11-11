@@ -1,46 +1,60 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LoginPage } from './pages/LoginPage';
+import { Navbar } from './components/Navbar';
 
-interface HealthData {
-  status: string;
-  version: string;
-  commit: string;
+function StudentEventsPage() {
+  const { user } = useAuth();
+  return (
+    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <h2>Upcoming Events</h2>
+      <p>Welcome, {user?.displayName}! You are logged in as a Student.</p>
+    </div>
+  );
+}
+
+function OrganizerEventsPage() {
+  const { user } = useAuth();
+  return (
+    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <h2>Organizer Dashboard / Events</h2>
+      <p>Welcome, {user?.displayName}! You are logged in as an Organizer.</p>
+    </div>
+  );
+}
+
+function RootRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role === 'ORGANIZER') {
+    return <Navigate to="/organizer/events" replace />;
+  }
+
+  return <Navigate to="/events" replace />;
 }
 
 export default function App() {
-  const [health, setHealth] = useState<HealthData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => {
-        setHealth(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Health check failed', err);
-        setLoading(false);
-      });
-  }, []);
-
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>KMUTT Event Registration & Attendance System</h1>
-      <p>Baseline Platform & Configuration (SR-01)</p>
-      <div style={{ padding: '1rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px' }}>
-        <h3>System Status:</h3>
-        {loading ? (
-          <p>Checking API health...</p>
-        ) : health ? (
-          <ul>
-            <li><strong>Status:</strong> {health.status}</li>
-            <li><strong>Version:</strong> {health.version}</li>
-            <li><strong>Commit:</strong> {health.commit}</li>
-          </ul>
-        ) : (
-          <p style={{ color: 'red' }}>Could not reach API server</p>
-        )}
-      </div>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+          <Navbar />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/events" element={<StudentEventsPage />} />
+            <Route path="/organizer/events" element={<OrganizerEventsPage />} />
+            <Route path="*" element={<RootRedirect />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
