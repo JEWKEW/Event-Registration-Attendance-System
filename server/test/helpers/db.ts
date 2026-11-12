@@ -32,6 +32,13 @@ export const TEST_USERS = {
     displayName: 'Student Two',
     role: UserRole.STUDENT,
     studentNo: '65000002'
+  },
+  stu3: {
+    id: '33333333-3333-4333-8333-333333333333',
+    email: 'stu3@demo.kmutt.test',
+    displayName: 'Student Three',
+    role: UserRole.STUDENT,
+    studentNo: '65000003'
   }
 };
 

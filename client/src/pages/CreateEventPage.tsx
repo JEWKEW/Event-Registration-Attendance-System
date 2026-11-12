@@ -114,8 +114,12 @@ export function CreateEventPage() {
         return;
       }
 
-      // Success: redirect to organizer events list
-      navigate('/organizer/events');
+      // Success: redirect to roster page (AC-18, Contract F-03)
+      if (data?.event?.id) {
+        navigate(`/organizer/events/${data.event.id}`);
+      } else {
+        navigate('/organizer/events');
+      }
     } catch (err: any) {
       setGeneralError(err.message || 'An unexpected error occurred');
     } finally {
