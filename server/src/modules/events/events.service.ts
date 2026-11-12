@@ -3,7 +3,7 @@ import { AppError } from '../../lib/errors.js';
 import { clock } from '../../lib/clock.js';
 import { CreateEventInput } from './events.schemas.js';
 import { validateSchedule } from './events.validator.js';
-import { EventStatus, RegistrationStatus } from '@prisma/client';
+import { EventStatus, RegistrationStatus, UserRole } from '@prisma/client';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -23,6 +23,9 @@ export class EventsService {
         }
       },
       include: {
+        organizer: {
+          select: { display_name: true }
+        },
         registrations: {
           where: {
             status: RegistrationStatus.ACTIVE
@@ -43,26 +46,22 @@ export class EventsService {
 
       return {
         id: event.id,
-        organizerId: event.organizer_id,
         title: event.title,
-        description: event.description,
         category: event.category,
         location: event.location,
         startAt: event.start_at.toISOString(),
         endAt: event.end_at.toISOString(),
         registrationDeadline: event.registration_deadline.toISOString(),
         capacity: event.capacity,
-        status: event.status,
-        effectiveStatus: event.status,
-        publishedAt: event.published_at?.toISOString() || null,
         activeCount,
         remainingSeats,
-        registrationOpen
+        registrationOpen,
+        organizerName: event.organizer.display_name
       };
     });
   }
 
-  async getEventById(id: string) {
+  async getEventById(id: string, user?: { id: string; role: string }) {
     if (!isValidUuid(id)) {
       throw new AppError(404, 'NOT_FOUND', 'Event not found.');
     }
@@ -72,16 +71,19 @@ export class EventsService {
     const event = await prisma.event.findUnique({
       where: { id },
       include: {
+        organizer: {
+          select: { display_name: true }
+        },
         registrations: {
           where: {
             status: RegistrationStatus.ACTIVE
           },
-          select: { id: true, student_id: true }
+          select: { id: true, student_id: true, status: true, registered_at: true }
         }
       }
     });
 
-    if (!event) {
+    if (!event || event.status !== EventStatus.PUBLISHED) {
       throw new AppError(404, 'NOT_FOUND', 'Event not found.');
     }
 
@@ -92,23 +94,37 @@ export class EventsService {
       now.getTime() <= event.registration_deadline.getTime() &&
       remainingSeats > 0;
 
+    let myRegistration = null;
+    if (user && user.role === UserRole.STUDENT) {
+      const studentReg = event.registrations.find((r) => r.student_id === user.id);
+      if (studentReg) {
+        myRegistration = {
+          id: studentReg.id,
+          status: studentReg.status,
+          registeredAt: studentReg.registered_at.toISOString()
+        };
+      }
+    }
+
     return {
-      id: event.id,
-      organizerId: event.organizer_id,
-      title: event.title,
-      description: event.description,
-      category: event.category,
-      location: event.location,
-      startAt: event.start_at.toISOString(),
-      endAt: event.end_at.toISOString(),
-      registrationDeadline: event.registration_deadline.toISOString(),
-      capacity: event.capacity,
-      status: event.status,
-      effectiveStatus: event.status,
-      publishedAt: event.published_at?.toISOString() || null,
-      activeCount,
-      remainingSeats,
-      registrationOpen
+      event: {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        category: event.category,
+        location: event.location,
+        startAt: event.start_at.toISOString(),
+        endAt: event.end_at.toISOString(),
+        registrationDeadline: event.registration_deadline.toISOString(),
+        capacity: event.capacity,
+        status: event.status,
+        effectiveStatus: event.status,
+        activeCount,
+        remainingSeats,
+        registrationOpen,
+        organizerName: event.organizer.display_name
+      },
+      myRegistration
     };
   }
 

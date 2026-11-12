@@ -14,8 +14,8 @@ export class EventsController {
 
   async getEventById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const event = await eventsService.getEventById(req.params.id);
-      res.status(200).json({ event });
+      const result = await eventsService.getEventById(req.params.id, req.user);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
