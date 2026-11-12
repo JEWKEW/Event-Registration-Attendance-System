@@ -5,6 +5,12 @@ import { CreateEventInput } from './events.schemas.js';
 import { validateSchedule } from './events.validator.js';
 import { EventStatus, RegistrationStatus } from '@prisma/client';
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function isValidUuid(id: string): boolean {
+  return UUID_REGEX.test(id);
+}
+
 export class EventsService {
   async getUpcomingEvents() {
     const now = clock.now();
@@ -57,6 +63,10 @@ export class EventsService {
   }
 
   async getEventById(id: string) {
+    if (!isValidUuid(id)) {
+      throw new AppError(404, 'NOT_FOUND', 'Event not found.');
+    }
+
     const now = clock.now();
 
     const event = await prisma.event.findUnique({
@@ -156,6 +166,8 @@ export class EventsService {
   }
 
   async getOrganizerEvents(organizerId: string) {
+    const now = clock.now();
+
     const events = await prisma.event.findMany({
       where: { organizer_id: organizerId },
       include: {
@@ -164,12 +176,17 @@ export class EventsService {
           select: { id: true }
         }
       },
-      orderBy: { start_at: 'desc' }
+      orderBy: { start_at: 'asc' }
     });
 
     return events.map((event) => {
       const activeCount = event.registrations.length;
       const remainingSeats = Math.max(0, event.capacity - activeCount);
+      const effectiveStatus =
+        event.status === EventStatus.PUBLISHED && now.getTime() > event.end_at.getTime()
+          ? 'COMPLETED'
+          : event.status;
+
       return {
         id: event.id,
         organizerId: event.organizer_id,
@@ -182,7 +199,7 @@ export class EventsService {
         registrationDeadline: event.registration_deadline.toISOString(),
         capacity: event.capacity,
         status: event.status,
-        effectiveStatus: event.status,
+        effectiveStatus,
         publishedAt: event.published_at?.toISOString() || null,
         activeCount,
         remainingSeats
@@ -191,6 +208,10 @@ export class EventsService {
   }
 
   async getEventRoster(eventId: string, organizerId: string) {
+    if (!isValidUuid(eventId)) {
+      throw new AppError(404, 'NOT_FOUND', 'Event not found.');
+    }
+
     const event = await prisma.event.findUnique({
       where: { id: eventId }
     });
@@ -214,7 +235,8 @@ export class EventsService {
           select: {
             id: true,
             display_name: true,
-            student_no: true
+            student_no: true,
+            email: true
           }
         }
       },
@@ -222,16 +244,21 @@ export class EventsService {
     });
 
     return {
-      eventId: event.id,
-      title: event.title,
-      capacity: event.capacity,
+      event: {
+        id: event.id,
+        title: event.title,
+        capacity: event.capacity,
+        activeCount: registrations.length
+      },
       registrations: registrations.map((r) => ({
         id: r.id,
+        status: r.status,
         registeredAt: r.registered_at.toISOString(),
         student: {
           id: r.student.id,
           displayName: r.student.display_name,
-          studentNo: r.student.student_no
+          studentNo: r.student.student_no,
+          email: r.student.email
         }
       }))
     };
