@@ -4,17 +4,9 @@ import { LoginPage } from './pages/LoginPage';
 import { CreateEventPage } from './pages/CreateEventPage';
 import { OrganizerEventsPage } from './pages/OrganizerEventsPage';
 import { EventRosterPage } from './pages/EventRosterPage';
+import { EventsPage } from './pages/EventsPage';
+import { EventDetailPage } from './pages/EventDetailPage';
 import { Navbar } from './components/Navbar';
-
-function StudentEventsPage() {
-  const { user } = useAuth();
-  return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h2>Upcoming Events</h2>
-      <p>Welcome, {user?.displayName}! You are logged in as a Student.</p>
-    </div>
-  );
-}
 
 function RootRedirect() {
   const { user, loading } = useAuth();
@@ -42,7 +34,8 @@ export default function App() {
           <Navbar />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/events" element={<StudentEventsPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/organizer/events" element={<OrganizerEventsPage />} />
             <Route path="/organizer/events/new" element={<CreateEventPage />} />
             <Route path="/organizer/events/:id" element={<EventRosterPage />} />

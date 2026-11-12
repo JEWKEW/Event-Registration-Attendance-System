@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -24,9 +24,46 @@ export function Navbar() {
       borderBottom: '1px solid #e5e7eb',
       fontFamily: 'sans-serif'
     }}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#1f2937' }}>
-        KMUTT Events
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <Link
+          to="/"
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            color: '#1f2937',
+            textDecoration: 'none'
+          }}
+        >
+          KMUTT Events
+        </Link>
+        {user.role === 'STUDENT' && (
+          <Link
+            to="/events"
+            style={{
+              fontSize: '0.9rem',
+              color: '#4b5563',
+              textDecoration: 'none',
+              fontWeight: 500
+            }}
+          >
+            Upcoming Events
+          </Link>
+        )}
+        {user.role === 'ORGANIZER' && (
+          <Link
+            to="/organizer/events"
+            style={{
+              fontSize: '0.9rem',
+              color: '#4b5563',
+              textDecoration: 'none',
+              fontWeight: 500
+            }}
+          >
+            My Events
+          </Link>
+        )}
       </div>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <span style={{ fontSize: '0.9rem', color: '#4b5563' }}>
           <strong>{user.displayName}</strong> · {roleDisplay}
