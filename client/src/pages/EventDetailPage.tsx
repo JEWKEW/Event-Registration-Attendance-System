@@ -35,6 +35,8 @@ export function EventDetailPage() {
   const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [registerFeedback, setRegisterFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const fetchEvent = useCallback(async () => {
     if (!id) return;
@@ -71,6 +73,70 @@ export function EventDetailPage() {
   useEffect(() => {
     fetchEvent();
   }, [fetchEvent]);
+
+  const handleRegister = async () => {
+    if (!id || isRegistering) return;
+    setIsRegistering(true);
+    setRegisterFeedback(null);
+
+    try {
+      const res = await fetch(`/api/events/${id}/registrations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({})
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.status === 201 && data?.registration) {
+        setMyRegistration({
+          id: data.registration.id,
+          status: data.registration.status,
+          registeredAt: data.registration.registeredAt
+        });
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                activeCount: prev.activeCount + 1,
+                remainingSeats: Math.max(0, prev.remainingSeats - 1)
+              }
+            : null
+        );
+        setRegisterFeedback({ type: 'success', message: "You're successfully registered!" });
+        return;
+      }
+
+      if (res.status === 409) {
+        const code = data?.error?.code;
+        if (code === 'EVENT_FULL') {
+          setRegisterFeedback({ type: 'error', message: 'Sorry, this event just filled up.' });
+          setEvent((prev) => (prev ? { ...prev, remainingSeats: 0 } : null));
+        } else if (code === 'ALREADY_REGISTERED') {
+          setRegisterFeedback({ type: 'error', message: "You're already registered for this event." });
+          fetchEvent();
+        } else if (code === 'REGISTRATION_CLOSED' || code === 'EVENT_NOT_OPEN') {
+          setRegisterFeedback({ type: 'error', message: 'Registration is closed for this event.' });
+          setEvent((prev) => (prev ? { ...prev, registrationOpen: false } : null));
+        } else {
+          setRegisterFeedback({ type: 'error', message: data?.error?.message || 'Registration failed.' });
+        }
+        return;
+      }
+
+      setRegisterFeedback({
+        type: 'error',
+        message: data?.error?.message || `Failed to register (${res.status})`
+      });
+    } catch {
+      setRegisterFeedback({ type: 'error', message: 'Something went wrong, try again.' });
+    } finally {
+      setIsRegistering(false);
+    }
+  };
 
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
@@ -210,6 +276,23 @@ export function EventDetailPage() {
           </div>
 
           <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1.5rem' }}>
+            {registerFeedback && (
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  marginBottom: '1rem',
+                  borderRadius: '6px',
+                  backgroundColor: registerFeedback.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                  border: `1px solid ${registerFeedback.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
+                  color: registerFeedback.type === 'success' ? '#15803d' : '#b91c1c',
+                  fontSize: '0.9rem',
+                  fontWeight: 500
+                }}
+              >
+                {registerFeedback.message}
+              </div>
+            )}
+
             {myRegistration ? (
               <div
                 style={{
@@ -232,6 +315,17 @@ export function EventDetailPage() {
                     Registered on {formatBangkokDate(myRegistration.registeredAt)}
                   </div>
                 </div>
+                <Link
+                  to={`/registrations/${myRegistration.id}`}
+                  style={{
+                    color: '#15803d',
+                    textDecoration: 'underline',
+                    fontSize: '0.9rem',
+                    fontWeight: 500
+                  }}
+                >
+                  View registration →
+                </Link>
               </div>
             ) : event.remainingSeats === 0 ? (
               <button
@@ -267,21 +361,20 @@ export function EventDetailPage() {
               </button>
             ) : user?.role === 'STUDENT' ? (
               <button
+                disabled={isRegistering}
                 style={{
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: '#2563eb',
+                  backgroundColor: isRegistering ? '#93c5fd' : '#2563eb',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '6px',
                   fontWeight: 600,
                   fontSize: '0.95rem',
-                  cursor: 'pointer'
+                  cursor: isRegistering ? 'not-allowed' : 'pointer'
                 }}
-                onClick={() => {
-                  alert('Registration is configured for F-06!');
-                }}
+                onClick={handleRegister}
               >
-                Register
+                {isRegistering ? 'Registering…' : 'Register'}
               </button>
             ) : (
               <p style={{ margin: 0, color: '#6b7280', fontSize: '0.9rem', fontStyle: 'italic' }}>

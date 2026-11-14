@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { registerSchema } from './registrations.schemas.js';
+import { registerEventSchema } from './registrations.schemas.js';
 import { registrationsService } from './registrations.service.js';
 
 export class RegistrationsController {
@@ -25,12 +25,11 @@ export class RegistrationsController {
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // Validate schema (rejects any spoofed studentId with 400)
-      registerSchema.parse(req.body);
-      const studentId = req.user!.id;
+      registerEventSchema.parse(req.body ?? {});
       const eventId = req.params.id;
-      const registration = await registrationsService.register(studentId, eventId);
-      res.status(201).json({ registration });
+      const studentId = req.user!.id;
+      const result = await registrationsService.registerForEvent(eventId, studentId);
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }
