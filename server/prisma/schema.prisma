@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  ORGANIZER
+}
+
+enum EventCategory {
+  WORKSHOP
+  SEMINAR
+  CAMP
+  SPORTS
+  VOLUNTEER
+  OTHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  ACTIVE
+  CANCELLED
+  CANCELLED_BY_EVENT
+}
+
+model User {
+  id                    String         @id @default(uuid()) @db.Uuid
+  email                 String         @unique
+  password_hash         String
+  display_name          String
+  role                  UserRole
+  student_no            String?        @unique
+  created_at            DateTime       @default(now()) @db.Timestamptz
+
+  owned_events          Event[]        @relation("EventOrganizer")
+  registrations         Registration[] @relation("StudentRegistrations")
+  checked_in_records    Registration[] @relation("CheckedInByUser")
+
+  @@map("users")
+}
+
+model Event {
+  id                    String         @id @default(uuid()) @db.Uuid
+  organizer_id          String         @db.Uuid
+  title                 String         @db.VarChar(120)
+  description           String         @default("") @db.Text
+  category              EventCategory
+  location              String         @db.VarChar(200)
+  start_at              DateTime       @db.Timestamptz
+  end_at                DateTime       @db.Timestamptz
+  registration_deadline DateTime       @db.Timestamptz
+  capacity              Int
+  status                EventStatus    @default(DRAFT)
+  published_at          DateTime?      @db.Timestamptz
+  cancel_reason         String?        @db.Text
+  cancelled_at          DateTime?      @db.Timestamptz
+  created_at            DateTime       @default(now()) @db.Timestamptz
+  updated_at            DateTime       @default(now()) @updatedAt @db.Timestamptz
+
+  organizer             User           @relation("EventOrganizer", fields: [organizer_id], references: [id], onDelete: Restrict)
+  registrations         Registration[]
+
+  @@index([status, start_at], name: "idx_events_status_start_at")
+  @@map("events")
+}
+
+model Registration {
+  id                    String             @id @default(uuid()) @db.Uuid
+  event_id              String             @db.Uuid
+  student_id            String             @db.Uuid
+  status                RegistrationStatus @default(ACTIVE)
+  registered_at         DateTime           @default(now()) @db.Timestamptz
+  cancelled_at          DateTime?          @db.Timestamptz
+  checked_in_at         DateTime?          @db.Timestamptz
+  checked_in_by         String?            @db.Uuid
+
+  event                 Event              @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  student               User               @relation("StudentRegistrations", fields: [student_id], references: [id], onDelete: Restrict)
+  checked_in_by_user    User?              @relation("CheckedInByUser", fields: [checked_in_by], references: [id], onDelete: SetNull)
+
+  @@index([event_id, status], name: "idx_reg_event_status")
+  @@map("registrations")
+}
+
+model Session {
+  sid                   String             @id @db.VarChar
+  sess                  Json               @db.Json
+  expire                DateTime           @db.Timestamptz
+
+  @@index([expire], name: "IDX_session_expire")
+  @@map("session")
+}

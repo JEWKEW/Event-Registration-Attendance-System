@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment files (NFR-11: no secrets committed)
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+build/
+client/dist/
+server/dist/
+.vite/
+client/.vite/
+
+# Test & coverage artifacts
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System and IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
