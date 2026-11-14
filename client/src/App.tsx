@@ -6,6 +6,8 @@ import { OrganizerEventsPage } from './pages/OrganizerEventsPage';
 import { EventRosterPage } from './pages/EventRosterPage';
 import { EventsPage } from './pages/EventsPage';
 import { EventDetailPage } from './pages/EventDetailPage';
+import { MyRegistrationsPage } from './pages/MyRegistrationsPage';
+import { RegistrationDetailPage } from './pages/RegistrationDetailPage';
 import { Navbar } from './components/Navbar';
 
 function RootRedirect() {
@@ -36,6 +38,9 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/me/registrations" element={<MyRegistrationsPage />} />
+            <Route path="/registrations/:id" element={<RegistrationDetailPage />} />
+            <Route path="/me/registrations/:id" element={<RegistrationDetailPage />} />
             <Route path="/organizer/events" element={<OrganizerEventsPage />} />
             <Route path="/organizer/events/new" element={<CreateEventPage />} />
             <Route path="/organizer/events/:id" element={<EventRosterPage />} />
