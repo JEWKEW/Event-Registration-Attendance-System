@@ -39,6 +39,83 @@ export const TEST_USERS = {
     displayName: 'Student Three',
     role: UserRole.STUDENT,
     studentNo: '65000003'
+  },
+  stu4: {
+    id: '33333333-3333-4333-8333-333333333334',
+    email: 'stu4@demo.kmutt.test',
+    displayName: 'Student Four',
+    role: UserRole.STUDENT,
+    studentNo: '65000004'
+  },
+  stu5: {
+    id: '33333333-3333-4333-8333-333333333335',
+    email: 'stu5@demo.kmutt.test',
+    displayName: 'Student Five',
+    role: UserRole.STUDENT,
+    studentNo: '65000005'
+  },
+  stu6: {
+    id: '33333333-3333-4333-8333-333333333336',
+    email: 'stu6@demo.kmutt.test',
+    displayName: 'Student Six',
+    role: UserRole.STUDENT,
+    studentNo: '65000006'
+  },
+  stu7: {
+    id: '33333333-3333-4333-8333-333333333337',
+    email: 'stu7@demo.kmutt.test',
+    displayName: 'Student Seven',
+    role: UserRole.STUDENT,
+    studentNo: '65000007'
+  },
+  stu8: {
+    id: '33333333-3333-4333-8333-333333333338',
+    email: 'stu8@demo.kmutt.test',
+    displayName: 'Student Eight',
+    role: UserRole.STUDENT,
+    studentNo: '65000008'
+  },
+  stu9: {
+    id: '33333333-3333-4333-8333-333333333339',
+    email: 'stu9@demo.kmutt.test',
+    displayName: 'Student Nine',
+    role: UserRole.STUDENT,
+    studentNo: '65000009'
+  },
+  stu10: {
+    id: '33333333-3333-4333-8333-333333333310',
+    email: 'stu10@demo.kmutt.test',
+    displayName: 'Student Ten',
+    role: UserRole.STUDENT,
+    studentNo: '65000010'
+  },
+  stu11: {
+    id: '33333333-3333-4333-8333-333333333311',
+    email: 'stu11@demo.kmutt.test',
+    displayName: 'Student Eleven',
+    role: UserRole.STUDENT,
+    studentNo: '65000011'
+  },
+  stu12: {
+    id: '33333333-3333-4333-8333-333333333312',
+    email: 'stu12@demo.kmutt.test',
+    displayName: 'Student Twelve',
+    role: UserRole.STUDENT,
+    studentNo: '65000012'
+  },
+  stu13: {
+    id: '33333333-3333-4333-8333-333333333313',
+    email: 'stu13@demo.kmutt.test',
+    displayName: 'Student Thirteen',
+    role: UserRole.STUDENT,
+    studentNo: '65000013'
+  },
+  stu14: {
+    id: '33333333-3333-4333-8333-333333333314',
+    email: 'stu14@demo.kmutt.test',
+    displayName: 'Student Fourteen',
+    role: UserRole.STUDENT,
+    studentNo: '65000014'
   }
 };
 

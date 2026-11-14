@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { eventsController } from './events.controller.js';
+import { registrationsController } from '../registrations/registrations.controller.js';
 import { requireAuth } from '../../middleware/requireAuth.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { UserRole } from '@prisma/client';
@@ -12,6 +13,7 @@ eventsRouter.get('/', requireAuth, (req, res, next) => eventsController.getEvent
 eventsRouter.get('/:id', requireAuth, (req, res, next) => eventsController.getEventById(req, res, next));
 eventsRouter.post('/', requireAuth, requireRole(UserRole.ORGANIZER), (req, res, next) => eventsController.createEvent(req, res, next));
 eventsRouter.get('/:id/registrations', requireAuth, requireRole(UserRole.ORGANIZER), (req, res, next) => eventsController.getEventRoster(req, res, next));
+eventsRouter.post('/:id/registrations', requireAuth, requireRole(UserRole.STUDENT), (req, res, next) => registrationsController.register(req, res, next));
 
 // Organizer routes
 organizerRouter.get('/events', requireAuth, requireRole(UserRole.ORGANIZER), (req, res, next) => eventsController.getOrganizerEvents(req, res, next));

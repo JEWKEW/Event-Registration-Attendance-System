@@ -1,5 +1,3 @@
 import { z } from 'zod';
 
-export const registerSchema = z.object({}).strict();
-
-export type RegisterInput = z.infer<typeof registerSchema>;
+export const registerEventSchema = z.object({}).strict();
