@@ -37,17 +37,30 @@ export function Navbar() {
           KMUTT Events
         </Link>
         {user.role === 'STUDENT' && (
-          <Link
-            to="/events"
-            style={{
-              fontSize: '0.9rem',
-              color: '#4b5563',
-              textDecoration: 'none',
-              fontWeight: 500
-            }}
-          >
-            Upcoming Events
-          </Link>
+          <>
+            <Link
+              to="/events"
+              style={{
+                fontSize: '0.9rem',
+                color: '#4b5563',
+                textDecoration: 'none',
+                fontWeight: 500
+              }}
+            >
+              Upcoming Events
+            </Link>
+            <Link
+              to="/me/registrations"
+              style={{
+                fontSize: '0.9rem',
+                color: '#4b5563',
+                textDecoration: 'none',
+                fontWeight: 500
+              }}
+            >
+              My Registrations
+            </Link>
+          </>
         )}
         {user.role === 'ORGANIZER' && (
           <Link

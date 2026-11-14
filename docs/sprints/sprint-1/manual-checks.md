@@ -47,5 +47,15 @@ This document records the execution and evidence for manual verification checks 
 ## M-01: Data Persistence Across Restart (NFR-06)
 
 * **Requirement:** NFR-06 (Reliability / Persistence)
-* **Target:** Events and registrations survive an application restart (local) and a container restart.
-* **Status:** Verified with Docker named volume `postgres_data` mapping to `/var/lib/postgresql/data`. Full registration persistence verification will run with feature F-07.
+* **Target:** Events and registrations survive an application restart (local) and a container restart. Results read straight from PostgreSQL with no ephemeral state loss.
+
+### Execution Record
+
+| Field | Record |
+|---|---|
+| **Date** | 2026-11-14 |
+| **Branch / Feature** | `feature/F-07-my-registrations` (F-07) |
+| **Tester** | Student A |
+| **Protocol** | 1. Logged in as `stu1@demo.kmutt.test`.<br/>2. Registered for an event via `POST /api/events/:id/registrations`.<br/>3. Confirmed registration appears in `/me/registrations`.<br/>4. Stopped the Node server process and stopped the `events_db` container (`docker compose stop db`).<br/>5. Restarted container (`docker compose start db`) and started Node server (`npm run dev`).<br/>6. Logged in again and navigated to `/me/registrations` and `/registrations/:id`. |
+| **Outcome** | **PASS** |
+| **Findings** | Registration row and status (`ACTIVE`) persisted intact in PostgreSQL named volume `postgres_data`. `GET /api/me/registrations` and `GET /api/registrations/:id` returned the exact same registration ID and timestamp. |

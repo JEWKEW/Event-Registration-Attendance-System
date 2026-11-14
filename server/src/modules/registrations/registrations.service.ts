@@ -2,12 +2,49 @@ import { prisma } from '../../lib/prisma.js';
 import { AppError } from '../../lib/errors.js';
 import { clock } from '../../lib/clock.js';
 import { isValidUuid } from '../events/events.service.js';
-import { RegistrationStatus, Prisma } from '@prisma/client';
+import { RegistrationStatus, EventStatus, Prisma } from '@prisma/client';
 import { checkRegistrationEligibility } from './registrations.validator.js';
+
+export function formatRegistrationDto(
+  reg: {
+    id: string;
+    status: RegistrationStatus;
+    registered_at: Date;
+    event: {
+      id: string;
+      title: string;
+      start_at: Date;
+      end_at: Date;
+      location: string;
+      status: EventStatus;
+    };
+  },
+  now: Date
+) {
+  const event = reg.event;
+  const effectiveStatus =
+    event.status === EventStatus.PUBLISHED && now.getTime() > event.end_at.getTime()
+      ? 'COMPLETED'
+      : event.status;
+
+  return {
+    id: reg.id,
+    status: reg.status,
+    registeredAt: reg.registered_at.toISOString(),
+    event: {
+      id: event.id,
+      title: event.title,
+      startAt: event.start_at.toISOString(),
+      endAt: event.end_at.toISOString(),
+      location: event.location,
+      effectiveStatus
+    }
+  };
+}
 
 export class RegistrationsService {
   async getMyRegistrations(studentId: string) {
-    return prisma.registration.findMany({
+    const registrations = await prisma.registration.findMany({
       where: {
         student_id: studentId,
         status: RegistrationStatus.ACTIVE
@@ -16,9 +53,14 @@ export class RegistrationsService {
         event: true
       },
       orderBy: {
-        registered_at: 'desc'
+        event: {
+          start_at: 'asc'
+        }
       }
     });
+
+    const now = clock.now();
+    return registrations.map((r) => formatRegistrationDto(r, now));
   }
 
   /**
@@ -45,7 +87,8 @@ export class RegistrationsService {
       throw new AppError(404, 'NOT_FOUND', 'Registration not found.');
     }
 
-    return registration;
+    const now = clock.now();
+    return formatRegistrationDto(registration, now);
   }
 
   /**

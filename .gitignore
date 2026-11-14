@@ -12,6 +12,8 @@ dist/
 build/
 client/dist/
 server/dist/
+.vite/
+client/.vite/
 
 # Test & coverage artifacts
 coverage/
