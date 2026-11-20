@@ -38,3 +38,13 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Project Kit local state & config
+.kit-state/
+resources.env
+app.env
+secrets.map
+project-kit/resources.env
+project-kit/app.env
+project-kit/secrets.map
+

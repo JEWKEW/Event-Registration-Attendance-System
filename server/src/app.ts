@@ -1,6 +1,9 @@
 import express, { Express } from 'express';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import { config } from './lib/config.js';
+import { prisma } from './lib/prisma.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { createSessionMiddleware } from './middleware/session.js';
 import { loadUser } from './middleware/loadUser.js';
@@ -11,20 +14,17 @@ import { meRouter, registrationsRouter, eventRegistrationsRouter } from './modul
 export function createApp(): Express {
   const app = express();
 
+  // Trust Cloud Run / reverse proxy so secure session cookies work behind HTTPS termination
+  app.set('trust proxy', 1);
+
   app.use(
     cors({
-      origin: config.CORS_ORIGIN,
+      origin: config.CORS_ORIGIN.split(',').map((o) => o.trim()),
       credentials: true
     })
   );
 
   app.use(express.json());
-
-  // Session middleware backed by PostgreSQL (connect-pg-simple)
-  app.use(createSessionMiddleware());
-
-  // Load user and authoritative role from PostgreSQL database (F-02)
-  app.use(loadUser);
 
   // SR-01 Health Check Endpoint (anonymous, no auth required)
   app.get('/api/health', (_req, res) => {
@@ -35,6 +35,22 @@ export function createApp(): Express {
     });
   });
 
+  // Cloud Readiness Endpoint (checks PostgreSQL database reachability)
+  app.get('/api/ready', async (_req, res) => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.status(200).json({ status: 'ready', db: 'connected' });
+    } catch {
+      res.status(503).json({ status: 'not_ready', db: 'disconnected' });
+    }
+  });
+
+  // Session middleware backed by PostgreSQL (connect-pg-simple)
+  app.use(createSessionMiddleware());
+
+  // Load user and authoritative role from PostgreSQL database (F-02)
+  app.use(loadUser);
+
   // F-01 Authentication Routes
   app.use('/api/auth', authRouter);
 
@@ -44,6 +60,18 @@ export function createApp(): Express {
   app.use('/api/organizer', organizerRouter);
   app.use('/api/me', meRouter);
   app.use('/api/registrations', registrationsRouter);
+
+  // Serve built React SPA in production (Unified container on Cloud Run)
+  const clientDistPath = path.resolve(__dirname, '../../client/dist');
+  if (fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      res.sendFile(path.join(clientDistPath, 'index.html'));
+    });
+  }
 
   // Central error handling middleware
   app.use(errorHandler);
