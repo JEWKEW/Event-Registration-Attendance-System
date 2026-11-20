@@ -1,0 +1,25 @@
+FROM node:22-alpine
+WORKDIR /app
+RUN apk add --no-cache openssl
+
+COPY package*.json ./
+RUN npm install
+
+COPY prisma ./prisma/
+RUN npx prisma generate
+
+COPY tsconfig.json ./
+COPY src ./src/
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN npm run build && chmod +x ./docker-entrypoint.sh && chown -R node:node /app
+
+ENV NODE_ENV=production
+ENV TZ=Asia/Bangkok
+ENV PORT=3000
+EXPOSE 3000
+
+USER node
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["node", "dist/index.js"]
