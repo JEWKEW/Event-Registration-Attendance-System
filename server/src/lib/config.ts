@@ -11,7 +11,10 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   DATABASE_URL_TEST: z.string().optional().default('postgresql://app:app@localhost:5433/events_test'),
-  SESSION_SECRET: z.string().min(32, 'SESSION_SECRET must be at least 32 characters long'),
+  SESSION_SECRET: z
+    .string()
+    .min(32, 'SESSION_SECRET must be at least 32 characters long')
+    .default('kmutt-events-default-session-secret-key-at-least-32-chars'),
   SESSION_IDLE_MINUTES: z.coerce.number().default(120),
   BCRYPT_ROUNDS: z.coerce.number().default(12),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),

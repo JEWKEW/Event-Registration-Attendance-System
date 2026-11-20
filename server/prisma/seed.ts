@@ -99,14 +99,23 @@ export const SEED_EVENTS = {
 async function main() {
   console.log('🌱 Starting deterministic database seed...');
 
-  const rawPassword = process.env.SEED_DEMO_PASSWORD || 'local-demo-only';
+  const rawPassword = process.env.SEED_DEMO_PASSWORD || process.env.DEMO_USER_PASSWORD || 'local-demo-only';
   const bcryptRounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
   const passwordHash = await bcrypt.hash(rawPassword, bcryptRounds);
 
-  // Clean existing data in reverse dependency order
-  await prisma.$executeRawUnsafe(`
-    TRUNCATE TABLE registrations, events, session, users CASCADE;
-  `);
+  // In production, do not truncate existing user data; only seed if the database is empty
+  if (process.env.NODE_ENV === 'production') {
+    const existingUsers = await prisma.user.count();
+    if (existingUsers > 0) {
+      console.log(`✓ Database already contains ${existingUsers} users; skipping destructive seed in production.`);
+      return;
+    }
+  } else {
+    // Clean existing data in reverse dependency order for deterministic local/test seeds
+    await prisma.$executeRawUnsafe(`
+      TRUNCATE TABLE registrations, events, session, users CASCADE;
+    `);
+  }
 
   // 1. Seed Users
   for (const user of Object.values(SEED_USERS)) {

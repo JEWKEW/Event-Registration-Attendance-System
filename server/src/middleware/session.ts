@@ -6,7 +6,11 @@ import { config } from '../lib/config.js';
 const PgStore = connectPgSimple(session);
 
 export function createSessionMiddleware(): RequestHandler {
-  const connectionString = process.env.DATABASE_URL || config.DATABASE_URL;
+  const rawUrl = process.env.DATABASE_URL || config.DATABASE_URL;
+  // Strip Prisma-only query parameters (schema, connection_limit) for node-postgres / connect-pg-simple compatibility
+  const connectionString = rawUrl
+    .replace(/([?&])(schema|connection_limit)=[^&]*(&|$)/g, '$1')
+    .replace(/[?&]$/, '');
 
   return session({
     name: 'sid',
@@ -22,7 +26,7 @@ export function createSessionMiddleware(): RequestHandler {
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: config.NODE_ENV === 'production',
+      secure: 'auto',
       maxAge: config.SESSION_IDLE_MINUTES * 60 * 1000
     }
   });
