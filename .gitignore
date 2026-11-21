@@ -48,3 +48,7 @@ project-kit/resources.env
 project-kit/app.env
 project-kit/secrets.map
 
+# Python bytecode
+__pycache__/
+*.pyc
+
