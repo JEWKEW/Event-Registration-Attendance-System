@@ -10,7 +10,7 @@ describe('SR-01 Health Check API', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      status: 'ok',
+      status: 'intentionally-broken-for-merge-gate-proof',
       version: '0.1.0',
       commit: expect.any(String)
     });
