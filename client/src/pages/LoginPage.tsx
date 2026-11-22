@@ -77,9 +77,12 @@ export function LoginPage() {
       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       fontFamily: 'sans-serif'
     }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', textAlign: 'center', color: '#111827' }}>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.35rem', textAlign: 'center', color: '#111827' }}>
         Log in to KMUTT Events
       </h2>
+      <p style={{ fontSize: '0.85rem', color: '#6b7280', textAlign: 'center', marginTop: 0, marginBottom: '1.5rem' }}>
+        Campus Event Registration &amp; Attendance Portal (Release v1.1)
+      </p>
 
       {isExpired && (
         <div style={{
