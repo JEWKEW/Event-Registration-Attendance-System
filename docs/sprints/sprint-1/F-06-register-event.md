@@ -106,3 +106,4 @@ Product DoD plus: TDD evidence (red run of TEST-30/32/33/34/36 at commit `<sha-r
 | Version | Date | Change |
 |---|---|---|
 | 1.0 | 2026-11-13 | Initial contract for F-06 |
+| 1.1 | 2026-11-28 | Sprint 2 interaction alignment (Hazard #1 / F-08 BR-09): `POST /api/events/:id/registrations` checks event visibility first so a student attempting to register on a `DRAFT` event receives `404 NOT_FOUND` without disclosing its existence. Pure function `checkRegistrationEligibility` retains `EVENT_NOT_OPEN` for `CANCELLED` / `COMPLETED` events. |
