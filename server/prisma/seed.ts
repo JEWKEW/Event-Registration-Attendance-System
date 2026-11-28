@@ -93,6 +93,39 @@ export const SEED_EVENTS = {
     category: EventCategory.SPORTS,
     location: 'KMUTT Sports Complex',
     capacity: 20
+  },
+  // Sprint 2 deterministic seed additions (SR-01)
+  e06: {
+    id: 'eeeeeeee-eeee-4eee-8eee-000000000006',
+    title: 'AI Design Draft Meetup',
+    description: 'Unpublished draft workshop for Sprint 2 lifecycle testing.',
+    category: EventCategory.WORKSHOP,
+    location: 'LX Building 11th Floor',
+    capacity: 25
+  },
+  e07: {
+    id: 'eeeeeeee-eeee-4eee-8eee-000000000007',
+    title: 'Cloud Check-In Clinic',
+    description: 'Live session inside the check-in window for F-13 testing.',
+    category: EventCategory.WORKSHOP,
+    location: 'SIT Auditorium',
+    capacity: 30
+  },
+  e08: {
+    id: 'eeeeeeee-eeee-4eee-8eee-000000000008',
+    title: 'Outdoor Movie Night',
+    description: 'Cancelled campus activity for F-10 verification.',
+    category: EventCategory.OTHER,
+    location: 'KMUTT Lawn',
+    capacity: 60
+  },
+  e09: {
+    id: 'eeeeeeee-eeee-4eee-8eee-000000000009',
+    title: 'Completed DevOps Talk',
+    description: 'Ended event with mixed attendance outcomes for F-14 summary testing.',
+    category: EventCategory.SEMINAR,
+    location: 'CB2-201',
+    capacity: 40
   }
 };
 
@@ -227,9 +260,84 @@ async function main() {
       end_at: new Date(now.getTime() + 6 * dayMs + 3 * hourMs)
     }
   });
+  // E-06: org1, DRAFT, future start (F-08 draft visibility & publish testing)
+  await prisma.event.create({
+    data: {
+      id: SEED_EVENTS.e06.id,
+      organizer_id: SEED_USERS.org1.id,
+      title: SEED_EVENTS.e06.title,
+      description: SEED_EVENTS.e06.description,
+      category: SEED_EVENTS.e06.category,
+      location: SEED_EVENTS.e06.location,
+      capacity: SEED_EVENTS.e06.capacity,
+      status: EventStatus.DRAFT,
+      published_at: null,
+      registration_deadline: new Date(now.getTime() + 9 * dayMs),
+      start_at: new Date(now.getTime() + 10 * dayMs),
+      end_at: new Date(now.getTime() + 10 * dayMs + 2 * hourMs)
+    }
+  });
+
+  // E-07: org1, PUBLISHED, starts in +30 min (inside F-13 check-in window: start - 60m .. end)
+  const minMs = 60 * 1000;
+  await prisma.event.create({
+    data: {
+      id: SEED_EVENTS.e07.id,
+      organizer_id: SEED_USERS.org1.id,
+      title: SEED_EVENTS.e07.title,
+      description: SEED_EVENTS.e07.description,
+      category: SEED_EVENTS.e07.category,
+      location: SEED_EVENTS.e07.location,
+      capacity: SEED_EVENTS.e07.capacity,
+      status: EventStatus.PUBLISHED,
+      published_at: new Date(now.getTime() - 2 * dayMs),
+      registration_deadline: new Date(now.getTime() + 30 * minMs),
+      start_at: new Date(now.getTime() + 30 * minMs),
+      end_at: new Date(now.getTime() + 3 * hourMs)
+    }
+  });
+
+  // E-08: org1, CANCELLED with reason (F-10 verification)
+  await prisma.event.create({
+    data: {
+      id: SEED_EVENTS.e08.id,
+      organizer_id: SEED_USERS.org1.id,
+      title: SEED_EVENTS.e08.title,
+      description: SEED_EVENTS.e08.description,
+      category: SEED_EVENTS.e08.category,
+      location: SEED_EVENTS.e08.location,
+      capacity: SEED_EVENTS.e08.capacity,
+      status: EventStatus.CANCELLED,
+      published_at: new Date(now.getTime() - 4 * dayMs),
+      cancel_reason: 'Venue unavailable due to heavy rain forecast.',
+      cancelled_at: new Date(now.getTime() - 6 * hourMs),
+      registration_deadline: new Date(now.getTime() + 2 * dayMs),
+      start_at: new Date(now.getTime() + 3 * dayMs),
+      end_at: new Date(now.getTime() + 3 * dayMs + 2 * hourMs)
+    }
+  });
+
+  // E-09: org1, PUBLISHED & ended (F-14 summary: 1 attended, 1 absent, 1 self-cancelled -> 50.0%)
+  await prisma.event.create({
+    data: {
+      id: SEED_EVENTS.e09.id,
+      organizer_id: SEED_USERS.org1.id,
+      title: SEED_EVENTS.e09.title,
+      description: SEED_EVENTS.e09.description,
+      category: SEED_EVENTS.e09.category,
+      location: SEED_EVENTS.e09.location,
+      capacity: SEED_EVENTS.e09.capacity,
+      status: EventStatus.PUBLISHED,
+      published_at: new Date(now.getTime() - 10 * dayMs),
+      registration_deadline: new Date(now.getTime() - 4 * dayMs),
+      start_at: new Date(now.getTime() - 3 * dayMs),
+      end_at: new Date(now.getTime() - 3 * dayMs + 2 * hourMs)
+    }
+  });
   console.log(`✓ Seeded ${Object.keys(SEED_EVENTS).length} events`);
 
-  // 3. Seed Registration for E-05
+  // 3. Seed Registrations
+  // R-01: E-05 active registration (stu2) — preserved from Sprint 1
   await prisma.registration.create({
     data: {
       id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000001',
@@ -239,7 +347,71 @@ async function main() {
       registered_at: new Date(now.getTime() - 12 * hourMs)
     }
   });
-  console.log(`✓ Seeded initial active registration for E-05 (stu2)`);
+
+  // R-02 & R-03: E-07 active registrations inside check-in window (stu1, stu2)
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000002',
+      event_id: SEED_EVENTS.e07.id,
+      student_id: SEED_USERS.stu1.id,
+      status: RegistrationStatus.ACTIVE,
+      registered_at: new Date(now.getTime() - 24 * hourMs)
+    }
+  });
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000003',
+      event_id: SEED_EVENTS.e07.id,
+      student_id: SEED_USERS.stu2.id,
+      status: RegistrationStatus.ACTIVE,
+      registered_at: new Date(now.getTime() - 20 * hourMs)
+    }
+  });
+
+  // R-04: E-08 cancelled-by-event registration (stu3)
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000004',
+      event_id: SEED_EVENTS.e08.id,
+      student_id: SEED_USERS.stu3.id,
+      status: RegistrationStatus.CANCELLED_BY_EVENT,
+      registered_at: new Date(now.getTime() - 2 * dayMs),
+      cancelled_at: new Date(now.getTime() - 6 * hourMs)
+    }
+  });
+
+  // R-05..R-07: E-09 ended event (stu1 ATTENDED, stu2 ABSENT, stu3 CANCELLED)
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000005',
+      event_id: SEED_EVENTS.e09.id,
+      student_id: SEED_USERS.stu1.id,
+      status: RegistrationStatus.ACTIVE,
+      registered_at: new Date(now.getTime() - 6 * dayMs),
+      checked_in_at: new Date(now.getTime() - 3 * dayMs + 10 * minMs),
+      checked_in_by: SEED_USERS.org1.id
+    }
+  });
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000006',
+      event_id: SEED_EVENTS.e09.id,
+      student_id: SEED_USERS.stu2.id,
+      status: RegistrationStatus.ACTIVE,
+      registered_at: new Date(now.getTime() - 5 * dayMs)
+    }
+  });
+  await prisma.registration.create({
+    data: {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000007',
+      event_id: SEED_EVENTS.e09.id,
+      student_id: SEED_USERS.stu3.id,
+      status: RegistrationStatus.CANCELLED,
+      registered_at: new Date(now.getTime() - 5 * dayMs),
+      cancelled_at: new Date(now.getTime() - 4 * dayMs - hourMs)
+    }
+  });
+  console.log('✓ Seeded Sprint 1 + Sprint 2 deterministic registrations (R-01..R-07)');
 
   console.log('✅ Deterministic seed completed successfully.');
 }

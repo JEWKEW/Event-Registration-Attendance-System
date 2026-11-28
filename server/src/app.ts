@@ -26,11 +26,11 @@ export function createApp(): Express {
 
   app.use(express.json());
 
-  // SR-01 Health Check Endpoint (anonymous, no auth required)
+  // SR-01 Health Check Endpoint (anonymous, no auth required; OBS-01 dynamic release metadata)
   app.get('/api/health', (_req, res) => {
     res.status(200).json({
       status: 'ok',
-      version: '0.1.0',
+      version: process.env.APP_VERSION || '0.1.0',
       commit: process.env.GIT_COMMIT || 'v0.1.0-dev'
     });
   });
