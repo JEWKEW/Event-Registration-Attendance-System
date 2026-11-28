@@ -39,9 +39,14 @@ COPY --from=client-builder /app/client/dist /app/client/dist
 
 RUN chmod +x ./docker-entrypoint.sh && chown -R node:node /app
 
+ARG APP_VERSION=0.2.0-dev
+ARG GIT_COMMIT=unknown
+
 ENV NODE_ENV=production
 ENV TZ=Asia/Bangkok
 ENV PORT=3000
+ENV APP_VERSION=$APP_VERSION
+ENV GIT_COMMIT=$GIT_COMMIT
 EXPOSE 3000
 
 USER node

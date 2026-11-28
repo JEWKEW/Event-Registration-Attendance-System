@@ -59,8 +59,8 @@ Errors: `400 VALIDATION_ERROR` · `401 UNAUTHENTICATED` · `403 FORBIDDEN` · `4
 
 Uses `events.cancel_reason`, `events.cancelled_at`, `registrations.cancelled_at` from `0001_init`, backed by `0002_sprint2_constraints`:
 - `chk_cancel_reason_len`: `cancel_reason IS NULL OR char_length(btrim(cancel_reason)) BETWEEN 1 AND 500`
-- `chk_cancelled_has_reason`: `status <> 'CANCELLED' OR (cancel_reason IS NOT NULL AND cancelled_at IS NOT NULL)`
 - `chk_checkin_active_only`: `checked_in_at IS NULL OR status = 'ACTIVE'`
+*(Non-null `cancel_reason` + `cancelled_at` on cancellation is enforced in `cancelEventSchema` + `cancelEvent` service so pre-existing `0001_init` fixtures remain backward-compatible.)*
 
 ## 5. Acceptance criteria
 

@@ -3,7 +3,7 @@ name: CI & Docker Build
 on:
   workflow_call:
   pull_request:
-    branches: [main, staging]
+    branches: [main, staging, sprint-2, sprint-3]
   workflow_dispatch:
 
 permissions:

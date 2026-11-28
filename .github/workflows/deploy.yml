@@ -47,6 +47,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Validate deployment settings
         env:
@@ -69,7 +70,11 @@ jobs:
         run: |
           gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
           IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$IMAGE_TAG"
-          docker build --tag "$IMAGE" .
+          APP_VERSION=$(git describe --tags --exact-match "$IMAGE_TAG" 2>/dev/null || node -p "require('./package.json').version")
+          docker build \
+            --build-arg APP_VERSION="$APP_VERSION" \
+            --build-arg GIT_COMMIT="$IMAGE_TAG" \
+            --tag "$IMAGE" .
           docker push "$IMAGE"
 
       - name: Verify image, migrate and deploy
