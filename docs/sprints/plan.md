@@ -46,23 +46,23 @@ All other Sprint 2 features (`F-08`, `F-09`, `F-11`, `F-12`) also follow contrac
 
 All implementation issues are assigned to **`@JEWKEW`** and reviewed by **`@Decaa0`** (substantive review comment + approval; no self-approval).
 
-| Order | Milestone | Feature / Scope | Branch | Reserved AC / TEST | Deliverable 2 Target |
+| Issue | Milestone | Feature / Scope | Branch | Reserved AC / TEST | Deliverable 2 Target |
 |---|---|---|---|---|---|
-| 1 | `Sprint 2` | `[SR-01]` Migration `0002` constraints, `OBS-01` health metadata, seed `E-06..E-09` & test factories | `feature/SR-01-s2-foundation` | Supports all + Lab 6 `OBS-01` | In `v0.2.0` |
-| 2 | `Sprint 2` | `[F-08]` Draft & event lifecycle | `feature/F-08-draft-lifecycle` | `AC-36..43` · `TEST-42..50` | In `v0.2.0` |
-| 3 | `Sprint 2` | `[F-11]` Student self-cancel & re-register | `feature/F-11-cancel-reregister` | `AC-44..49` · `TEST-51..58` | In `v0.2.0` |
-| 4 | `Sprint 2` | `[F-13]` Organizer check-in & undo *(TDD featured)* | `feature/F-13-checkin-undo` | `AC-50..57` · `TEST-59..69` | In `v0.2.0` |
-| 5 | `Sprint 2` | `[F-09]` Edit event & capacity change | `feature/F-09-edit-capacity` | `AC-58..64` · `TEST-70..79` | In `v0.2.0` |
-| 6 | `Sprint 2` | `[F-10]` Cancel event with atomic cascade *(TDD featured)* | `feature/F-10-cancel-event` | `AC-65..70` · `TEST-80..87` | In `v0.2.0` |
-| 7 | `Sprint 2` | `[F-12]` Search & filter events | `feature/F-12-search-filter` | `AC-71..74` · `TEST-88..94` | In `v0.2.0` |
-| 8 | `Sprint 2` | `[F-02]` Sprint 2 authorization matrix & Sprint 1 regression extension | `feature/F-02-s2-authorization` | `AC-75..76` · `TEST-95..97` | In `v0.2.0` |
-| 9 | `Sprint 2` | `[Release v0.2.0]` Sprint 2 integration, E2E journeys & `main` release | `sprint-2` → `main` | Full S1+S2 suite + E2E | Tag `v0.2.0` |
-| 10 | `Sprint 3` | `[Docs]` Sprint 3 engineering contracts (`F-14`–`F-17`) | `sprint-2` / `sprint-3` | `AC-77..95` · `TEST-98..120` | Committed pre-code |
-| 11 | `Sprint 3` | `[F-14]` Event attendance summary & `deriveAttendance` *(TDD featured)* | `feature/F-14-attendance-summary` | `AC-77..82` · `TEST-98..104` | In `v0.3.0-rc.1` |
-| 12 | `Sprint 3` | `[Release v0.3.0-rc.1]` Deliverable 2 integrated candidate, GCP deploy, traceability & PDF | `sprint-3` → `main` | Parts A–E | Due **29 Nov 23:59** |
-| 13 | `Sprint 3` | `[F-15]` Organizer dashboard | `feature/F-15-organizer-dashboard` | `AC-83..86` · `TEST-105..109` | Post-D2 (target 30 Nov / before 13 Dec) |
-| 14 | `Sprint 3` | `[F-16]` Student attendance history | `feature/F-16-student-history` | `AC-87..90` · `TEST-110..114` | Post-D2 (target 12 Dec) |
-| 15 | `Sprint 3` | `[F-17]` Hardening, load test, final regression & `v1.0.0` release | `feature/F-17-hardening` → `main` | `AC-91..95` · `TEST-115..120`, `M-04` | Due **13 Dec** |
+| `#38` | `Sprint 2` | `[SR-01]` Migration `0002` constraints, `OBS-01` health metadata, seed `E-06..E-09` & test factories | `feature/SR-01-s2-foundation` | Supports all + Lab 6 `OBS-01` | In `v0.2.0` |
+| `#39` | `Sprint 2` | `[F-08]` Draft & event lifecycle | `feature/F-08-draft-lifecycle` | `AC-36..43` · `TEST-42..50` | In `v0.2.0` |
+| `#40` | `Sprint 2` | `[F-11]` Student self-cancel & re-register | `feature/F-11-cancel-reregister` | `AC-44..49` · `TEST-51..58` | In `v0.2.0` |
+| `#41` | `Sprint 2` | `[F-13]` Organizer check-in & undo *(TDD featured)* | `feature/F-13-checkin-undo` | `AC-50..57` · `TEST-59..69` | In `v0.2.0` |
+| `#42` | `Sprint 2` | `[F-09]` Edit event & capacity change | `feature/F-09-edit-capacity` | `AC-58..64` · `TEST-70..79` | In `v0.2.0` |
+| `#43` | `Sprint 2` | `[F-10]` Cancel event with atomic cascade *(TDD featured)* | `feature/F-10-cancel-event` | `AC-65..70` · `TEST-80..87` | In `v0.2.0` |
+| `#44` | `Sprint 2` | `[F-12]` Search & filter events | `feature/F-12-search-filter` | `AC-71..74` · `TEST-88..94` | In `v0.2.0` |
+| `#45` | `Sprint 2` | `[F-02]` Sprint 2 authorization matrix & Sprint 1 regression extension | `feature/F-02-s2-authorization` | `AC-75..76` · `TEST-95..97` | In `v0.2.0` |
+| `#46` | `Sprint 2` | `[Release v0.2.0]` Sprint 2 integration, E2E journeys & `main` release | `sprint-2` → `main` | Full S1+S2 suite + E2E | Tag `v0.2.0` |
+| `#47` | `Sprint 3` | `[Docs]` Sprint 3 engineering contracts (`F-14`–`F-17`) | `sprint-2` / `sprint-3` | `AC-77..95` · `TEST-98..120` | Committed (`d93fdbc`) |
+| `#48` | `Sprint 3` | `[F-14]` Event attendance summary & `deriveAttendance` *(TDD featured)* | `feature/F-14-attendance-summary` | `AC-77..82` · `TEST-98..104` | In `v0.3.0-rc.1` |
+| `#49` | `Sprint 3` | `[Release v0.3.0-rc.1]` Deliverable 2 integrated candidate, GCP deploy, traceability & PDF | `sprint-3` → `main` | Parts A–E | Due **29 Nov 23:59** |
+| `#50` | `Sprint 3` | `[F-15]` Organizer dashboard | `feature/F-15-organizer-dashboard` | `AC-83..86` · `TEST-105..109` | Post-D2 (target 30 Nov / before 13 Dec) |
+| `#51` | `Sprint 3` | `[F-16]` Student attendance history | `feature/F-16-student-history` | `AC-87..90` · `TEST-110..114` | Post-D2 (target 12 Dec) |
+| `#52` | `Sprint 3` | `[F-17]` Hardening, load test, final regression & `v1.0.0` release | `feature/F-17-hardening` → `main` | `AC-91..95` · `TEST-115..120`, `M-04` | Due **13 Dec** |
 
 ---
 

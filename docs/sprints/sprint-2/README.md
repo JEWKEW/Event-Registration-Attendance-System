@@ -92,13 +92,13 @@ Every Sprint 2 feature satisfies Product DoD (`E.0d`) plus:
 5. PR into `sprint-2` approved by `@Decaa0` with a substantive review comment.
 6. Full `npm test` (Sprint 1 + Sprint 2) passes on `sprint-2` and release PR `sprint-2 → main` tagged `v0.2.0`.
 
-| Feature | AC | Contract SHA | Red SHA | Green SHA | PR → `sprint-2` | Reviewer | Tests (Pass/Fail/Skip) | Status | Release |
-|---|---|---|---|---|---|---|---|---|---|
-| `SR-01` (S2) | `OBS-01`, `0002` | *(fill on commit)* | — | | | `@Decaa0` | | Specified | |
-| `F-08` | `AC-36`–`AC-43` | *(fill on commit)* | | | | `@Decaa0` | | Specified | |
-| `F-11` | `AC-44`–`AC-49` | *(fill on commit)* | | | | `@Decaa0` | | Specified | |
-| `F-13` | `AC-50`–`AC-57` | *(fill on commit)* | *(required)* | | | `@Decaa0` | | Specified | |
-| `F-09` | `AC-58`–`AC-64` | *(fill on commit)* | | | | `@Decaa0` | | Specified | |
-| `F-10` | `AC-65`–`AC-70` | *(fill on commit)* | *(required)* | | | `@Decaa0` | | Specified | |
-| `F-12` | `AC-71`–`AC-74` | *(fill on commit)* | | | | `@Decaa0` | | Specified | |
-| `F-02` ext | `AC-75`–`AC-76` | *(fill on commit)* | | | | `@Decaa0` | | Specified | |
+| Feature | Issue | AC | Contract SHA | Red SHA | Green SHA | PR → `sprint-2` | Reviewer | Tests (Pass/Fail/Skip) | Status | Release |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `SR-01` (S2) | `#38` | `OBS-01`, `0002` | `a22fdd1` | — | | | `@Decaa0` | | Specified | |
+| `F-08` | `#39` | `AC-36`–`AC-43` | `a22fdd1` | | | | `@Decaa0` | | Specified | |
+| `F-11` | `#40` | `AC-44`–`AC-49` | `a22fdd1` | | | | `@Decaa0` | | Specified | |
+| `F-13` | `#41` | `AC-50`–`AC-57` | `a22fdd1` | *(required)* | | | `@Decaa0` | | Specified | |
+| `F-09` | `#42` | `AC-58`–`AC-64` | `a22fdd1` | | | | `@Decaa0` | | Specified | |
+| `F-10` | `#43` | `AC-65`–`AC-70` | `a22fdd1` | *(required)* | | | `@Decaa0` | | Specified | |
+| `F-12` | `#44` | `AC-71`–`AC-74` | `a22fdd1` | | | | `@Decaa0` | | Specified | |
+| `F-02` ext | `#45` | `AC-75`–`AC-76` | `a22fdd1` | | | | `@Decaa0` | | Specified | |
